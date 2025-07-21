@@ -12,6 +12,7 @@ import {
   Simple,
   VerticalLayout,
   DynamicConstraints,
+  Admin,
 } from "./ReactWindowSplitter.stories.js";
 import { PanelResizer, PanelGroup, Panel } from "./ReactWindowSplitter.js";
 import { createTestUtils, dragHandle } from "@window-splitter/interface/test";
@@ -85,6 +86,26 @@ test("Conditional Panels", async () => {
 
   getByText("Close").click();
   await expectTemplate(handle.current, "236.96875px 10px 251.03125px");
+});
+
+test("Complex Conditional Panels", async () => {
+  const handle = { current: null } as unknown as {
+    current: PanelGroupHandle;
+  };
+  const { getByText } = render(
+    <div style={{ width: 800 }}>
+      <Admin handle={handle} />
+    </div>
+  );
+
+  await waitForMeasurement(handle.current);
+  await expectTemplate(handle.current, "240px 3px 277px 3px 277px");
+
+  getByText("Show traces").click();
+  await expectTemplate(handle.current, "594px 3px 100px 3px 100px");
+
+  getByText("Hide traces").click();
+  await expectTemplate(handle.current, "200px 3px 330px 3px 264px");
 });
 
 test("Dynamic constraints", async () => {

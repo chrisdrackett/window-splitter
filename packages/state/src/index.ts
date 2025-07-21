@@ -290,6 +290,15 @@ interface ExpandPanelEvent extends ControlledCollapseToggle {
   resolve?: () => void;
 }
 
+interface UpdateItemIndexEvent {
+  /** Update the index of a panel */
+  type: "updateItemIndex";
+  /** The panel to update */
+  itemId: string;
+  /** The new index of the panel */
+  index: number;
+}
+
 interface SetPanelPixelSizeEvent {
   /**
    * This event is used by the imperative panel API.
@@ -354,7 +363,8 @@ export type GroupMachineEvent =
   | RebindPanelCallbacksEvent
   | UpdateConstraintsEvent
   | LockGroupEvent
-  | UnlockGroupEvent;
+  | UnlockGroupEvent
+  | UpdateItemIndexEvent;
 
 type EventForType<T extends GroupMachineEvent["type"]> = Extract<
   GroupMachineEvent,
@@ -2042,6 +2052,13 @@ export function groupMachine(
     }
 
     switch (event.type) {
+      case "updateItemIndex":
+        context.items = sortWithOrder(
+          context.items.map((item) =>
+            item.id === event.itemId ? { ...item, order: event.index } : item
+          )
+        );
+        break;
       case "registerPanel":
         context.items = addDeDuplicatedItems(context.items, {
           type: "panel",

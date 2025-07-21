@@ -910,3 +910,71 @@ export function SiblingCollapsiblePanels() {
     </Flex>
   );
 }
+
+export function Admin({ handle }: { handle?: React.Ref<PanelGroupHandle> }) {
+  const [showTraces, setShowTraces] = useState(false);
+  const [chatCollapsed, setChatCollapsed] = useState(false);
+
+  return (
+    <>
+      <PanelGroup handle={handle} style={{ height: "calc(100vh - 100px)" }}>
+        {!showTraces && (
+          <>
+            <Panel
+              style={{ backgroundColor: "red" }}
+              min="200px"
+              max="240px"
+              id="sidebar"
+            >
+              <div>Sidebar</div>
+            </Panel>
+            <PanelResizer size="3px" id="sidebar-resizer" />
+            <Panel style={{ backgroundColor: "blue" }} min="250px" id="main">
+              <div>Main</div>
+            </Panel>
+            <PanelResizer size="3px" id="main-resizer" />
+          </>
+        )}
+
+        <Panel
+          style={{ backgroundColor: "#333366" }}
+          min="33%"
+          collapsible
+          collapsedSize="8px"
+          id="chat"
+          collapsed={chatCollapsed}
+          onCollapseChange={setChatCollapsed}
+        >
+          <div>Chat</div>
+        </Panel>
+
+        {showTraces && (
+          <>
+            <PanelResizer size="3px" id="details-resizer" />
+            <Panel
+              style={{ backgroundColor: "green" }}
+              default="33%"
+              min="100px"
+              id="details"
+            >
+              <div>Details</div>
+            </Panel>
+            <PanelResizer size="3px" id="traces-resizer" />
+            <Panel
+              style={{ backgroundColor: "yellow" }}
+              default="33%"
+              min="100px"
+              id="traces"
+            >
+              <div>Traces</div>
+            </Panel>
+          </>
+        )}
+      </PanelGroup>
+
+      <button type="button" onClick={() => setShowTraces(!showTraces)}>
+        {showTraces ? "Hide traces" : "Show traces"}
+      </button>
+    </>
+  );
+}

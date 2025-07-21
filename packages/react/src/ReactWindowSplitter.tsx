@@ -221,7 +221,7 @@ function useGroupItem<T extends Item>(
       return itemAtIndex;
     }
     return context.items[index];
-  }) as T;
+  }) as T | undefined;
   const { send } = GroupMachine.useActorRef();
   const machineRef = GroupMachine.useContextRef();
 
@@ -302,6 +302,24 @@ function useGroupItem<T extends Item>(
 
   // And unregister after layout so we can tell if the element was actually removed.
   React.useEffect(() => onUnmountRef.current, [currentItem?.id]);
+
+  // If an item index updates we need to update the state machine
+  const indexId = `${index}-${itemArg.id || currentItem?.id || item.id}`;
+  const lastIndexId = useRef(indexId);
+  const onUpdateIndex = useEffectEvent(() => {
+    send({
+      type: "updateItemIndex",
+      itemId: itemArg.id || currentItem?.id || item.id,
+      index,
+    });
+  });
+  React.useLayoutEffect(() => {
+    if (lastIndexId.current !== indexId) {
+      onUpdateIndex();
+    }
+
+    lastIndexId.current = indexId;
+  }, [indexId, onUpdateIndex]);
 
   return currentItem || item;
   /* eslint-enable react-hooks/rules-of-hooks */
@@ -640,12 +658,16 @@ const PanelVisible = React.forwardRef<
         return;
       }
 
-      const p = getPanelWithId(context, panelId);
+      try {
+        const p = getPanelWithId(context, panelId);
 
-      if (collapsed === true && !p.collapsed) {
-        send({ type: "collapsePanel", panelId, controlled: true });
-      } else if (collapsed === false && p.collapsed) {
-        send({ type: "expandPanel", panelId, controlled: true });
+        if (collapsed === true && !p.collapsed) {
+          send({ type: "collapsePanel", panelId, controlled: true });
+        } else if (collapsed === false && p.collapsed) {
+          send({ type: "expandPanel", panelId, controlled: true });
+        }
+      } catch {
+        // with conditional panels the panel might not be registered yet
       }
     }
   }, [send, collapsed, panelId, machineRef]);
