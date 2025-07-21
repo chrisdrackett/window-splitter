@@ -2079,11 +2079,20 @@ export function groupMachine(
           event.data.collapsed &&
           event.data.collapsedSize
         ) {
-          currentValue = event.data.collapsedSize;
+          currentValue = {
+            type: "pixel",
+            value: getUnitPixelValue(context, event.data.collapsedSize),
+          };
         } else if (event.data.default) {
-          currentValue = event.data.default;
+          currentValue = {
+            type: "pixel",
+            value: getUnitPixelValue(context, event.data.default),
+          };
         } else {
-          currentValue = event.data.min;
+          currentValue = {
+            type: "pixel",
+            value: getUnitPixelValue(context, event.data.min),
+          };
         }
 
         const newItems = addDeDuplicatedItems(context.items, {
