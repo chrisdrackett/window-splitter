@@ -301,12 +301,7 @@ function useGroupItem<T extends Item>(
   }, [index, itemArg, machineRef, send, onCollapseChangeRef, onResizeRef]);
 
   // And unregister after layout so we can tell if the element was actually removed.
-  React.useEffect(() => {
-    return () => {
-      onUnmountRef.current?.();
-      onUnmountRef.current = undefined;
-    };
-  }, []);
+  React.useEffect(() => onUnmountRef.current, [currentItem?.id]);
 
   return currentItem || item;
   /* eslint-enable react-hooks/rules-of-hooks */
