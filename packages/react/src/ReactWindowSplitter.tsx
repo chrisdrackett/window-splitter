@@ -48,6 +48,7 @@ import {
   GroupMachineEvent,
   State,
   initializePanelHandleData,
+  isPanelHandle,
 } from "@window-splitter/state";
 import {
   useEffectEvent,
@@ -214,9 +215,13 @@ function useGroupItem<T extends Item>(
 
   // The way this hooks is called is never conditional so the usage here is fine
   /* eslint-disable react-hooks/rules-of-hooks */
-  const currentItem = GroupMachine.useSelector(
-    ({ context }) => context.items[index]
-  ) as T;
+  const currentItem = GroupMachine.useSelector(({ context }) => {
+    const itemAtIndex = context.items[index];
+    if (itemAtIndex && itemAtIndex.id === item.id) {
+      return itemAtIndex;
+    }
+    return context.items[index];
+  }) as T;
   const { send } = GroupMachine.useActorRef();
   const machineRef = GroupMachine.useContextRef();
 
@@ -729,19 +734,29 @@ export const PanelResizer = React.forwardRef<HTMLDivElement, PanelResizerProps>(
       [size, props.id]
     );
 
-    useGroupItem(data);
+    const { id: handleId } = useGroupItem(data);
 
     if (isPrerender) {
       return null;
     }
 
-    return <PanelResizerVisible ref={ref} panelHandleProp={data} {...props} />;
+    return (
+      <PanelResizerVisible
+        ref={ref}
+        panelHandleProp={data}
+        {...props}
+        handleId={handleId}
+      />
+    );
   }
 );
 
 const PanelResizerVisible = React.forwardRef<
   HTMLDivElement,
-  PanelResizerProps & { panelHandleProp: Omit<PanelHandleData, "id"> }
+  PanelResizerProps & {
+    panelHandleProp: Omit<PanelHandleData, "id">;
+    handleId: string;
+  }
 >(function PanelResizerVisible(
   {
     size = "0px",
@@ -750,6 +765,7 @@ const PanelResizerVisible = React.forwardRef<
     onDrag,
     onDragEnd,
     panelHandleProp,
+    handleId: handleIdProp,
     ...props
   },
   outerRef
@@ -759,12 +775,17 @@ const PanelResizerVisible = React.forwardRef<
   const unit = parseUnit(size);
   const { send } = GroupMachine.useActorRef();
   const { index } = useIndex();
-  const handleId = GroupMachine.useSelector(
-    ({ context }) => context.items[index]?.id || ""
-  );
-  const panelHandle = GroupMachine.useSelector(
-    ({ context }) => context.items[index] as PanelHandleData
-  );
+  const panelHandle = GroupMachine.useSelector(({ context }) => {
+    const item =
+      context.items.find((i) => i.id === handleIdProp) || context.items[index];
+
+    if (item && isPanelHandle(item)) {
+      return item;
+    }
+
+    return undefined;
+  });
+  const handleId = panelHandle?.id || "";
   const panelBeforeHandle = GroupMachine.useSelector(({ context }) => {
     const panel = context.items[index - 1];
     if (!panel) return undefined;
