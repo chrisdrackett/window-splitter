@@ -1,3 +1,16 @@
+# v1.1.2 (Mon Jul 21 2025)
+
+#### ⚠️ Pushed to `main`
+
+- handle order changes (andrew.lisowski@snowflake.com)
+- fix registering dynamic panel sizes with percents (andrew.lisowski@snowflake.com)
+
+#### Authors: 1
+
+- Andrew Lisowski (andrew.lisowski@snowflake.com)
+
+---
+
 # v1.1.1 (Mon Jul 14 2025)
 
 #### 🐛 Bug Fix

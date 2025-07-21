@@ -1,3 +1,22 @@
+# v1.1.2 (Mon Jul 21 2025)
+
+#### ⚠️ Pushed to `main`
+
+- `@window-splitter/react`, `@window-splitter/state`
+  - handle order changes (andrew.lisowski@snowflake.com)
+- `@window-splitter/react`
+  - use correct unmount function, not just latest (andrew.lisowski@snowflake.com)
+  - type (andrew.lisowski@snowflake.com)
+  - better item matching based on ids and not just indexes (andrew.lisowski@snowflake.com)
+- `@window-splitter/state`
+  - fix registering dynamic panel sizes with percents (andrew.lisowski@snowflake.com)
+
+#### Authors: 1
+
+- Andrew Lisowski (andrew.lisowski@snowflake.com)
+
+---
+
 # v1.1.1 (Mon Jul 14 2025)
 
 #### 🐛 Bug Fix
