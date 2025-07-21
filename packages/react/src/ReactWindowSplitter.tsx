@@ -107,7 +107,7 @@ const GroupMachine = {
     input: GroupMachineInput;
     children: React.ReactNode;
   }) => {
-    const [intiialValue, send, state] = useMemo(
+    const [initialValue, send, state] = useMemo(
       () =>
         groupMachine(input, (value) => {
           currentContextRef.current = value;
@@ -117,8 +117,8 @@ const GroupMachine = {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       []
     );
-    const currentContextRef = useRef(intiialValue);
-    const [currentValue, setCurrentValue] = useState(intiialValue);
+    const currentContextRef = useRef(initialValue);
+    const [currentValue, setCurrentValue] = useState(initialValue);
 
     useEffect(() => {
       send({ type: "unlockGroup" });
